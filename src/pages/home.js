@@ -38,7 +38,9 @@ function Home() {
 
   return (
     <div className="search">
-      <p>Search</p>
+      <p>
+        <b>Adicionar</b>
+      </p>
 
       <form onSubmit={formik.handleSubmit}>
         <label htmlFor="nome">nome:</label>
@@ -69,26 +71,54 @@ function Home() {
           onChange={formik.handleChange}
           value={formik.values.quantidade}
         />
+        <br></br>
+        <br></br>
         <button type="submit">Enviar</button>
       </form>
 
       <hr></hr>
       <div>
+        <p>
+          <b>Mostrar ultimo</b>
+        </p>
         Nome:{" "}
-        <input
-          value={store.length > 0 ? store[store.length - 1].nome : ""}
-        ></input>
+        <label>{store.length > 0 ? store[store.length - 1].nome : ""}</label>
+        <br></br>
+        <br></br>
         Preço:{" "}
-        <input
-          value={store.length > 0 ? store[store.length - 1].preco : ""}
-        ></input>
-        Nome:{" "}
-        <input
-          value={store.length > 0 ? store[store.length - 1].quantidade : ""}
-        ></input>
+        <label>{store.length > 0 ? store[store.length - 1].preco : ""}</label>
+        <br></br>
+        <br></br>
+        Quantidade:{" "}
+        <label>
+          {store.length > 0 ? store[store.length - 1].quantidade : ""}
+        </label>
+        <br></br>
+        <br></br>
+        <br></br>
+        <br></br>
+      </div>
+      <hr></hr>
+      <div>
+        <p>
+          <b>Mostrar todos</b>
+        </p>
+        <label>
+          {store.map((item) => {
+            return (
+              <ul>
+                <li>
+                  Nome:{item.nome}
+                  <br></br>
+                  Preco:{item.preco}
+                  <br></br>
+                  Quantidade:{item.quantidade}
+                </li>
+              </ul>
+            );
+          })}
+        </label>
         <button onClick={() => list()}>Recarregar lista</button>
-        <br></br>
-        <br></br>
       </div>
     </div>
   );
