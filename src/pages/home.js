@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { Children, useState } from "react";
 import { useFormik } from "formik";
 import axios from "axios";
+import { useStorage } from "../Context/store";
 
-function Home() {
-  const [store, setStore] = useState([]);
+function Home({ children }) {
+  const { store, setStore } = useStorage();
 
   async function reserch(nome, preco, quantidade) {
     await axios
@@ -38,6 +39,7 @@ function Home() {
 
   return (
     <div className="search">
+      {children}
       <p>
         <b>Adicionar</b>
       </p>
