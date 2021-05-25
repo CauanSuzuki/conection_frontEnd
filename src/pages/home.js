@@ -2,75 +2,60 @@ import React, { Children, useState } from "react";
 import { useFormik } from "formik";
 import axios from "axios";
 import { useStorage } from "../Context/store";
+import {reserch} from"../controller/home"
+import {funcaoDeletar} from"../controller/home"
+import {funcaoAlterar} from"../controller/home"
+import {list} from"../controller/home"
+
+const controllerHome = require("../controller/home")
+
 
 function Home({ children }) {
   const { store, setStore } = useStorage();
 
-  function reserch(nome, modelo, preco, quantidade) {
-    axios
-      .post("http://localhost:3333/produto", {
-        nome: nome,
-        modelo: modelo,
-        preco: preco,
-        quantidade: quantidade,
-      })
-      .then((resposta) => console.log(resposta.data));
-  }
-  function list() {
-    axios
-      .get("http://localhost:3333/produto", {})
-      .then(function (result) {
-        setStore(result.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
+  // function reserch(nome, modelo, preco, quantidade) {
+  //   axios
+  //     .post("http://localhost:3333/produto", {
+  //       nome: nome,
+  //       modelo: modelo,
+  //       preco: preco,
+  //       quantidade: quantidade,
+  //     })
+  //     .then((resposta) => console.log(resposta.data));
+  // }
+  // function list() {
+  //   axios
+  //     .get("http://localhost:3333/produto", {})
+  //     .then(function (result) {
+  //       setStore(result.data);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }
 
-  function funcaoDeletar(value) {
-    axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
-      setStore(store.filter((value, id) => value !== store.id));
-      console.log(res);
-      console.log(res.data);
-    });
-  }
-  function funcaoAlterar(item) {
-    axios
-      .put(
-        `http://localhost:3333/produto/${item.id}`,
-        {
-          id:item.id,
-          nome: formik.values.nome,
-          modelo: formik.values.modelo,
-          preco: formik.values.preco,
-          quantidade: formik.values.quantidade,
-        }
-        // setStore(
-        //   store.map((value, index) =>
-        //     value.id === item.id
-        //       ? {
-        //           id: item.id,
-        //           nome: formik.values.nome,
-        //           modelo: formik.values.modelo,
-        //           preco: formik.values.preco,
-        //           quantidade: formik.values.quantidade,
-        //         }
-        //       : {
-        //           id: value.id,
-        //           nome: value.nome,
-        //           modelo: value.modelo,
-        //           preco: value.preco,
-        //           quantidade: value.quantidade,
-        //         }
-        //   )
-        // )
-      )
-      .then((res) => {
-        // setStore(...store)
-        console.log(res);
-        console.log(res.data);
-      });
-  }
+  // function funcaoDeletar(value) {
+  //   axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
+  //     setStore(store.filter((value, id) => value !== store.id));
+  //     console.log(res);
+  //     console.log(res.data);
+  //   });
+  // }
+  // function funcaoAlterar(item) {
+  //   axios
+  //     .put(`http://localhost:3333/produto/${item.id}`, {
+  //       id: item.id,
+  //       nome: formik.values.nome,
+  //       modelo: formik.values.modelo,
+  //       preco: formik.values.preco,
+  //       quantidade: formik.values.quantidade,
+  //     })
+  //     .then((res) => {
+  //       // setStore(...store)
+  //       console.log(res);
+  //       console.log(res.data);
+      // });
+  // }
 
   const formik = useFormik({
     initialValues: {
@@ -85,59 +70,60 @@ function Home({ children }) {
   });
 
   return (
-    <div className="search">
+    <div className="principal">
       {children}
       <p>
         <b>Adicionar</b>
       </p>
+      <div className="adicionar">
+        <form onSubmit={formik.handleSubmit}>
+          <label htmlFor="nome">nome:</label>
+          <input
+            id="nome"
+            name="nome"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.nome}
+          />
+          <br></br>
+          <br></br>
+          <label htmlFor="modelo">modelo:</label>
+          <input
+            id="modelo"
+            name="modelo"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.modelo}
+          />
+          <br></br>
+          <br></br>
+          <label htmlFor="preco">preço:</label>
+          <input
+            id="preco"
+            name="preco"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.preco}
+          />
+          <br></br>
+          <br></br>
+          <label htmlFor="quantidade">quantidade:</label>
+          <input
+            id="quantidade"
+            name="quantidade"
+            type="text"
+            onChange={formik.handleChange}
+            value={formik.values.quantidade}
+          />
+          <br></br>
+          <br></br>
 
-      <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="nome">nome:</label>
-        <input
-          id="nome"
-          name="nome"
-          type="text"
-          onChange={formik.handleChange}
-          value={formik.values.nome}
-        />
-        <br></br>
-        <br></br>
-        <label htmlFor="modelo">modelo:</label>
-        <input
-          id="modelo"
-          name="modelo"
-          type="text"
-          onChange={formik.handleChange}
-          value={formik.values.modelo}
-        />
-        <br></br>
-        <br></br>
-        <label htmlFor="preco">preço:</label>
-        <input
-          id="preco"
-          name="preco"
-          type="text"
-          onChange={formik.handleChange}
-          value={formik.values.preco}
-        />
-        <br></br>
-        <br></br>
-        <label htmlFor="quantidade">quantidade:</label>
-        <input
-          id="quantidade"
-          name="quantidade"
-          type="text"
-          onChange={formik.handleChange}
-          value={formik.values.quantidade}
-        />
-        <br></br>
-        <br></br>
-
-        <button type="submit">Enviar</button>
-      </form>
+          <button type="submit">Enviar</button>
+        </form>
+      </div>
 
       <hr></hr>
-      <div>
+      <div className="mostrarUltimo">
         <p>
           <b>Mostrar ultimo</b>
         </p>
@@ -163,7 +149,7 @@ function Home({ children }) {
         <br></br>
       </div>
       <hr></hr>
-      <div>
+      <div className="mostarTdoso">
         <p>
           <b>Mostrar todos</b>
         </p>
