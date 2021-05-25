@@ -1,20 +1,17 @@
 import React from "react";
-import { useFormik } from "formik";
 import axios from "axios";
 import { useStorage } from "../Context/store";
 
-function Home({ children }) {
-  const { store, setStore } = useStorage();
+const formik = require("formik");
 
-  function reserch(nome, modelo, preco, quantidade) {
-    axios
-      .post("http://localhost:3333/produto", {
-        nome: nome,
-        modelo: modelo,
-        preco: preco,
-        quantidade: quantidade,
-      })
-      .then((resposta) => console.log(resposta.data));
+function Alterar({ Children }) {
+  const { store, setStore } = useStorage();
+  function funcaoDeletar(value) {
+    axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
+      setStore(store.filter((value, id) => value !== store.id));
+      console.log(res);
+      console.log(res.data);
+    });
   }
   function list() {
     axios
@@ -26,19 +23,6 @@ function Home({ children }) {
         console.log(error);
       });
   }
-
-  const formik = useFormik({
-    initialValues: {
-      nome: "",
-      modelo: "",
-      preco: "",
-      quantidade: "",
-    },
-    onSubmit: (value) => {
-      reserch(value.nome, value.modelo, value.preco, value.quantidade);
-    },
-  });
-
   return (
     <div className="mostarTdoso">
       <p>
@@ -57,6 +41,8 @@ function Home({ children }) {
                 <br></br>
                 Quantidade:{item.quantidade}
               </li>
+
+              <button onClick={() => funcaoDeletar(item.id)}>Remover</button>
             </ul>
           );
         })}
@@ -65,4 +51,5 @@ function Home({ children }) {
     </div>
   );
 }
-export default Home;
+
+export default Alterar;
