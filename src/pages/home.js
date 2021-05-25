@@ -6,8 +6,8 @@ import { useStorage } from "../Context/store";
 function Home({ children }) {
   const { store, setStore } = useStorage();
 
-  async function reserch(nome, modelo, preco, quantidade) {
-    await axios
+  function reserch(nome, modelo, preco, quantidade) {
+    axios
       .post("http://localhost:3333/produto", {
         nome: nome,
         modelo: modelo,
@@ -16,8 +16,8 @@ function Home({ children }) {
       })
       .then((resposta) => console.log(resposta.data));
   }
-  async function list() {
-    await axios
+  function list() {
+    axios
       .get("http://localhost:3333/produto", {})
       .then(function (result) {
         setStore(result.data);
@@ -27,38 +27,46 @@ function Home({ children }) {
       });
   }
 
-  async function funcaoDeletar(value) {
-    await axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
+  function funcaoDeletar(value) {
+    axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
       setStore(store.filter((value, id) => value !== store.id));
       console.log(res);
       console.log(res.data);
     });
   }
-  async function funcaoAlterar(item) {
-    await axios
+  function funcaoAlterar(item) {
+    axios
       .put(
         `http://localhost:3333/produto/${item.id}`,
-        setStore(
-          store.map((value, index) =>
-            value.id === item.id
-              ? {
-                  id: item.id,
-                  nome: formik.values.nome,
-                  modelo: formik.values.modelo,
-                  preco: formik.values.preco,
-                  quantidade: formik.values.quantidade,
-                }
-              : {
-                  id: value.id,
-                  nome: value.nome,
-                  modelo: value.modelo,
-                  preco: value.preco,
-                  quantidade: value.quantidade,
-                }
-          )
-        )
+        {
+          id:item.id,
+          nome: formik.values.nome,
+          modelo: formik.values.modelo,
+          preco: formik.values.preco,
+          quantidade: formik.values.quantidade,
+        }
+        // setStore(
+        //   store.map((value, index) =>
+        //     value.id === item.id
+        //       ? {
+        //           id: item.id,
+        //           nome: formik.values.nome,
+        //           modelo: formik.values.modelo,
+        //           preco: formik.values.preco,
+        //           quantidade: formik.values.quantidade,
+        //         }
+        //       : {
+        //           id: value.id,
+        //           nome: value.nome,
+        //           modelo: value.modelo,
+        //           preco: value.preco,
+        //           quantidade: value.quantidade,
+        //         }
+        //   )
+        // )
       )
       .then((res) => {
+        // setStore(...store)
         console.log(res);
         console.log(res.data);
       });
@@ -75,7 +83,7 @@ function Home({ children }) {
       reserch(value.nome, value.modelo, value.preco, value.quantidade);
     },
   });
-  console.log("store", store);
+
   return (
     <div className="search">
       {children}
