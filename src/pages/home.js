@@ -2,6 +2,7 @@ import React from "react";
 import { useFormik } from "formik";
 import axios from "axios";
 import { useStorage } from "../Context/store";
+import {} from './style.css' 
 
 function Home({ children }) {
   const { store, setStore } = useStorage();
@@ -40,24 +41,27 @@ function Home({ children }) {
   });
 
   return (
-    <div className="mostarTdoso">
-      <p>
-        <b>Mostrar todos</b>
-      </p>
+    // <div class="wrapper">
+    //   <div>One</div>
+    //   <div>Two</div>
+    //   <div>Three</div>
+    //   <div>Four</div>
+    //   <div>Five</div>
+    // </div>
+    <div className="conteudo">
       <label>
         {store.map((item) => {
           return (
-            <ul>
-              <li>
-                Nome:{item.nome}
-                <br></br>
-                Modelo:{item.modelo}
-                <br></br>
-                Preco:{item.preco}
-                <br></br>
-                Quantidade:{item.quantidade}
-              </li>
-            </ul>
+            <div className="wrapper">
+              <div className="nome">Nome:{item.nome}</div>
+
+              <div className="modelo">Modelo:{item.modelo}</div>
+
+              <div className="preco">Preco:{item.preco}</div>
+
+              <div className="quantidade">Quantidade:{item.quantidade}</div>
+              <hr></hr>
+            </div>
           );
         })}
       </label>
