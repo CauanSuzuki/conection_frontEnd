@@ -34,25 +34,34 @@ function Home({ children }) {
       console.log(res.data);
     });
   }
-  async function funcaoAlterar(value) {
-    await axios.put(`http://localhost:3333/produto/${value}`,{nome:}).then((res) => {
-      console.log("item", value);
-      setStore(
-        store.map((value, index) =>
-          value === store.id
-            ? {
-                id: value,
-                nome: value.nome,
-                modelo: value.modelo,
-                preco: value.preco,
-                quantidade: value.quantidade,
-              }
-            : value
+  async function funcaoAlterar(item) {
+    await axios
+      .put(
+        `http://localhost:3333/produto/${item.id}`,
+        setStore(
+          store.map((value, index) =>
+            value.id === item.id
+              ? {
+                  id: item.id,
+                  nome: formik.values.nome,
+                  modelo: formik.values.modelo,
+                  preco: formik.values.preco,
+                  quantidade: formik.values.quantidade,
+                }
+              : {
+                  id: value.id,
+                  nome: value.nome,
+                  modelo: value.modelo,
+                  preco: value.preco,
+                  quantidade: value.quantidade,
+                }
+          )
         )
-      );
-      console.log(res);
-      console.log(res.data);
-    });
+      )
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+      });
   }
 
   const formik = useFormik({
@@ -164,7 +173,7 @@ function Home({ children }) {
                   Quantidade:{item.quantidade}
                 </li>
                 <button onClick={() => funcaoDeletar(item.id)}>Remover</button>
-                <button onClick={() => funcaoAlterar(item.id)}>Alterar</button>
+                <button onClick={() => funcaoAlterar(item)}>Alterar</button>
               </ul>
             );
           })}
