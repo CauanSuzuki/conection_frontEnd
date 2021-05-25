@@ -6,10 +6,11 @@ import { useStorage } from "../Context/store";
 function Home({ children }) {
   const { store, setStore } = useStorage();
 
-  async function reserch(nome, preco, quantidade) {
+  async function reserch(nome, modelo, preco, quantidade) {
     await axios
-      .post("http://localhost:3335/produto", {
+      .post("http://localhost:3333/produto", {
         nome: nome,
+        modelo: modelo,
         preco: preco,
         quantidade: quantidade,
       })
@@ -17,7 +18,7 @@ function Home({ children }) {
   }
   async function list() {
     await axios
-      .get("http://localhost:3335/produto", {})
+      .get("http://localhost:3333/produto", {})
       .then(function (result) {
         setStore(result.data);
       })
@@ -26,17 +27,46 @@ function Home({ children }) {
       });
   }
 
+  async function funcaoDeletar(value) {
+    await axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
+      setStore(store.filter((value, id) => value !== store.id));
+      console.log(res);
+      console.log(res.data);
+    });
+  }
+  async function funcaoAlterar(value) {
+    await axios.put(`http://localhost:3333/produto/${value}`,{nome:}).then((res) => {
+      console.log("item", value);
+      setStore(
+        store.map((value, index) =>
+          value === store.id
+            ? {
+                id: value,
+                nome: value.nome,
+                modelo: value.modelo,
+                preco: value.preco,
+                quantidade: value.quantidade,
+              }
+            : value
+        )
+      );
+      console.log(res);
+      console.log(res.data);
+    });
+  }
+
   const formik = useFormik({
     initialValues: {
       nome: "",
+      modelo: "",
       preco: "",
       quantidade: "",
     },
     onSubmit: (value) => {
-      reserch(value.nome, value.preco, value.quantidade);
+      reserch(value.nome, value.modelo, value.preco, value.quantidade);
     },
   });
-
+  console.log("store", store);
   return (
     <div className="search">
       {children}
@@ -52,6 +82,16 @@ function Home({ children }) {
           type="text"
           onChange={formik.handleChange}
           value={formik.values.nome}
+        />
+        <br></br>
+        <br></br>
+        <label htmlFor="modelo">modelo:</label>
+        <input
+          id="modelo"
+          name="modelo"
+          type="text"
+          onChange={formik.handleChange}
+          value={formik.values.modelo}
         />
         <br></br>
         <br></br>
@@ -75,6 +115,7 @@ function Home({ children }) {
         />
         <br></br>
         <br></br>
+
         <button type="submit">Enviar</button>
       </form>
 
@@ -85,6 +126,10 @@ function Home({ children }) {
         </p>
         Nome:{" "}
         <label>{store.length > 0 ? store[store.length - 1].nome : ""}</label>
+        <br></br>
+        <br></br>
+        Modelo:{" "}
+        <label>{store.length > 0 ? store[store.length - 1].modelo : ""}</label>
         <br></br>
         <br></br>
         Preço:{" "}
@@ -112,10 +157,14 @@ function Home({ children }) {
                 <li>
                   Nome:{item.nome}
                   <br></br>
+                  Modelo:{item.modelo}
+                  <br></br>
                   Preco:{item.preco}
                   <br></br>
                   Quantidade:{item.quantidade}
                 </li>
+                <button onClick={() => funcaoDeletar(item.id)}>Remover</button>
+                <button onClick={() => funcaoAlterar(item.id)}>Alterar</button>
               </ul>
             );
           })}
