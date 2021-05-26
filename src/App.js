@@ -36,8 +36,8 @@ function App() {
         <Switch>
           <Route exact path="/" component={PageHome}></Route>
           <Route exact path="/cadastro" component={PageCadastro}></Route>
-          <Route exact path="/deletar" component={PageDeletar}></Route>
-          <Route exact path="/alterar" component={PageAlterar}></Route>
+          <Route exact path="/deletar/:id" component={PageDeletar}></Route>
+          <Route exact path="/alterar/:id" component={PageAlterar}></Route>
         </Switch>
       </div>
     </Router>

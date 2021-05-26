@@ -2,10 +2,23 @@ import React from "react";
 import { useFormik } from "formik";
 import axios from "axios";
 import { useStorage } from "../Context/store";
-import {} from './style.css' 
+import {} from "./style.css";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+  useHistory,
+  useLocation,
+} from "react-router-dom";
+import PageCadastro from "./cadastro";
+import PageDeletar from "./deletar";
+import PageAlterar from "./alterar";
 
 function Home({ children }) {
   const { store, setStore } = useStorage();
+  let history = useHistory();
 
   function reserch(nome, modelo, preco, quantidade) {
     axios
@@ -40,28 +53,39 @@ function Home({ children }) {
     },
   });
 
+  const redirecionarDeletar= (item) => {
+    history.push(`/deletar/${item}`);
+  };
+  const redirecionarAlterar= (item) => {
+    console.log(item)
+    history.push(`/alterar/${item}`);
+    
+  };
+ 
+
   return (
-    // <div class="wrapper">
-    //   <div>One</div>
-    //   <div>Two</div>
-    //   <div>Three</div>
-    //   <div>Four</div>
-    //   <div>Five</div>
-    // </div>
     <div className="conteudo">
       <label>
         {store.map((item) => {
           return (
-            <div className="wrapper">
-              <div className="nome">Nome:{item.nome}</div>
+            <>
+              {" "}
+              <div className="wrapper">
+                <div className="nome">{item.nome}</div>
 
-              <div className="modelo">Modelo:{item.modelo}</div>
+                <div className="modelo">{item.modelo}</div>
 
-              <div className="preco">Preco:{item.preco}</div>
+                <div className="preco">{item.preco}</div>
 
-              <div className="quantidade">Quantidade:{item.quantidade}</div>
+                <div className="quantidade">{item.quantidade}</div>
+                <div className="acoes">
+                  <button onClick={() => redirecionarDeletar(item.id)}>DELETAR</button>
+                  <br></br>
+                  <button onClick={() => redirecionarAlterar(item.id)}>ALTERAR</button>
+                </div>
+              </div>
               <hr></hr>
-            </div>
+            </>
           );
         })}
       </label>
