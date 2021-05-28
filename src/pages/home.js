@@ -1,77 +1,75 @@
-import React from "react";
-import { useFormik } from "formik";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { useStorage } from "../Context/store";
 import {} from "./style.css";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Redirect,
-  useHistory,
-  useLocation,
-} from "react-router-dom";
-import PageCadastro from "./cadastro";
-import PageDeletar from "./deletar";
-import PageAlterar from "./alterar";
+import { useHistory } from "react-router-dom";
 
 function Home({ children }) {
-  const { store, setStore } = useStorage();
+  const { store, setStore, del, setDel, ajuste,setAjuste } = useStorage();
   let history = useHistory();
 
-  function reserch(nome, modelo, preco, quantidade) {
-    axios
-      .post("http://localhost:3333/produto", {
-        nome: nome,
-        modelo: modelo,
-        preco: preco,
-        quantidade: quantidade,
-      })
-      .then((resposta) => console.log(resposta.data));
-  }
-  function list() {
-    axios
-      .get("http://localhost:3333/produto", {})
-      .then(function (result) {
-        setStore(result.data);
-      })
-      .catch(function (error) {
-        console.log(error);
+  useEffect(() => {
+    async function list() {
+      axios
+        .get("http://localhost:3333/produto", {})
+        .then(function (result) {
+          console.log("result data -->", result.data);
+          setStore(result.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    }
+    list();
+  }, []);
+
+  function deletarTodos() {
+    if (window.confirm("Você realmente deseja deletar todos?")) {
+      axios.delete(`http://localhost:3333/produto`).then((res) => {
+        {
+          setStore([]);
+        }
+
+        console.log(res.data);
       });
+    }
   }
 
-  const formik = useFormik({
-    initialValues: {
-      nome: "",
-      modelo: "",
-      preco: "",
-      quantidade: "",
-    },
-    onSubmit: (value) => {
-      reserch(value.nome, value.modelo, value.preco, value.quantidade);
-    },
-  });
+  function deletarSelecionados(value) {
+    axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
+      setStore(store.filter((value, id) => value !== store.id));
+      setStore(...store);
 
-  const redirecionarDeletar= (item) => {
+      console.log(res.data);
+    });
+  }
+
+  const redirecionarDeletar = (item) => {
     history.push(`/deletar/${item}`);
   };
-  const redirecionarAlterar= (item) => {
-    console.log(item)
+  const redirecionarAlterar = (item) => {
     history.push(`/alterar/${item}`);
-    
   };
- 
-
+  const redirecionarCadastrar = () => {
+    history.push(`/cadastro`);
+  };
+  console.log("del -->", del);
   return (
     <div className="conteudo">
       <label>
         {store.map((item) => {
+          console.log(item);
           return (
             <>
-              {" "}
               <div className="wrapper">
-                <div className="nome">{item.nome}</div>
+                <div className="nome">
+                  <input
+                    type="checkbox"
+                    value={item.id}
+                    onChange={(event) => setDel(event.target.value, ...del)}
+                  />
+                  {item.nome}
+                </div>
 
                 <div className="modelo">{item.modelo}</div>
 
@@ -79,9 +77,13 @@ function Home({ children }) {
 
                 <div className="quantidade">{item.quantidade}</div>
                 <div className="acoes">
-                  <button onClick={() => redirecionarDeletar(item.id)}>DELETAR</button>
+                  <button onClick={() => redirecionarDeletar(item.id)}>
+                    DELETAR
+                  </button>
                   <br></br>
-                  <button onClick={() => redirecionarAlterar(item.id)}>ALTERAR</button>
+                  <button onClick={() => redirecionarAlterar(item.id)}>
+                    ALTERAR
+                  </button>
                 </div>
               </div>
               <hr></hr>
@@ -89,7 +91,13 @@ function Home({ children }) {
           );
         })}
       </label>
-      <button onClick={() => list()}>Recarregar lista</button>
+      <div>
+        <button onClick={() => redirecionarCadastrar()}>Cadastrar</button>
+        <button onClick={() => deletarTodos()}>Deletar Todos</button>
+        <button onClick={() => deletarSelecionados(del)}>
+          Deletar Selecionados
+        </button>
+      </div>
     </div>
   );
 }

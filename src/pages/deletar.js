@@ -1,55 +1,37 @@
 import React from "react";
 import axios from "axios";
 import { useStorage } from "../Context/store";
+import { useHistory, useParams } from "react-router-dom";
 
-const formik = require("formik");
-
-function Alterar({ Children }) {
+function Deletar({ Children }) {
   const { store, setStore } = useStorage();
+  let identificar = useParams();
+  let history = useHistory();
+  const redirecionarHome = () => {
+    history.push("/");
+  };
+
   function funcaoDeletar(value) {
     axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
+      redirecionarHome();
       setStore(store.filter((value, id) => value !== store.id));
-      console.log(res);
+
       console.log(res.data);
     });
   }
-  function list() {
-    axios
-      .get("http://localhost:3333/produto", {})
-      .then(function (result) {
-        setStore(result.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
+
   return (
-    <div className="mostarTdoso">
+    <div className="deletarUm">
       <p>
-        <b>Mostrar todos</b>
+        <b>Deletar</b>
       </p>
       <label>
-        {store.map((item) => {
-          return (
-            <ul>
-              <li>
-                Nome:{item.nome}
-                <br></br>
-                Modelo:{item.modelo}
-                <br></br>
-                Preco:{item.preco}
-                <br></br>
-                Quantidade:{item.quantidade}
-              </li>
-
-              <button onClick={() => funcaoDeletar(item.id)}>Remover</button>
-            </ul>
-          );
-        })}
+        <p>´Deseja deletar ID {identificar.id} </p>
       </label>
-      <button onClick={() => list()}>Recarregar lista</button>
+      <button onClick={() => funcaoDeletar(identificar.id)}>Confirmar</button>
+      <button onClick={() => redirecionarHome()}>Cancelar</button>
     </div>
   );
 }
 
-export default Alterar;
+export default Deletar;

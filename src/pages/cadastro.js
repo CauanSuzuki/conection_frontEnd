@@ -2,11 +2,9 @@
 import React from "react";
 import { useFormik } from "formik";
 import axios from "axios";
-import { useStorage } from "../Context/store";
-const formik = require("formik");
+import { useHistory } from "react-router-dom";
 
 function Cadastro({ children }) {
-  const { store, setStore } = useStorage();
   const formik = useFormik({
     initialValues: {
       nome: "",
@@ -18,6 +16,10 @@ function Cadastro({ children }) {
       reserch(value.nome, value.modelo, value.preco, value.quantidade);
     },
   });
+  let history = useHistory();
+  const redirecionarHome = () => {
+    history.push("/");
+  };
   function reserch(nome, modelo, preco, quantidade) {
     axios
       .post("http://localhost:3333/produto", {
@@ -28,6 +30,7 @@ function Cadastro({ children }) {
       })
       .then((resposta) => console.log(resposta.data));
   }
+
   return (
     <div className="principal">
       {children}
@@ -77,7 +80,8 @@ function Cadastro({ children }) {
           <br></br>
           <br></br>
 
-          <button type="submit">Enviar</button>
+          <button type="submit">Cadastrar</button>
+          <button onClick={() => redirecionarHome()}>Home</button>
         </form>
       </div>
     </div>
