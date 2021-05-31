@@ -20,7 +20,7 @@ function Home({ children }) {
         });
     }
     list();
-  }, [setStore]);
+  }, []);
 
   function deletarTodos() {
     if (window.confirm("Você realmente deseja deletar todos?")) {
@@ -31,22 +31,20 @@ function Home({ children }) {
   }
 
   async function deletarSelecionados() {
-    console.log("del ---> ", del);
-    
-    del.forEach(async d => {
-      await axios
-      .delete(
-        `http://localhost:3333/prod/:${d}`
-      )
-      .then((res) => {
-        setStore((prevState) =>
-          prevState.filter((i) => !del.some((d) => d.id === i.id))
-        )
-        console.log("result data -->", d);
-      });   
+    del.forEach(async (d) => {
+      console.log(d);
+      await axios.delete(`http://localhost:3333/prod/${d}`);
     });
+
+    const novoStore = store.reduce((acc, cur) => {
+      if (del.some(item => item == cur.id)) return acc;
+
+      return [...acc, cur];
+    }, []);
+
+    setStore(novoStore);
+    setDel([])
   }
-  
 
   const handleSelect = (id) => {
     //se houver vou desmarcar
@@ -106,7 +104,9 @@ function Home({ children }) {
       <div>
         <button onClick={() => redirecionarCadastrar()}>Cadastrar</button>
         <button onClick={() => deletarTodos()}>Deletar Todos</button>
-        <button onClick={deletarSelecionados}>Deletar Selecionados</button>
+        <button onClick={() => deletarSelecionados()}>
+          Deletar Selecionados
+        </button>
       </div>
     </div>
   );
