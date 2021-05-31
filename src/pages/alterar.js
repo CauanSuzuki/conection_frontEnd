@@ -26,7 +26,7 @@ function Alterar({ Children }) {
         });
     }
     listarUm();
-  }, []);
+  }, [setRotativo,identificar.id]);
 
   async function funcaoAlterar(item) {
     await axios

@@ -5,7 +5,7 @@ import {} from "./style.css";
 import { useHistory } from "react-router-dom";
 
 function Home({ children }) {
-  const { store, setStore, del, setDel, ajuste,setAjuste } = useStorage();
+  const { store, setStore, del, setDel } = useStorage();
   let history = useHistory();
 
   useEffect(() => {
@@ -13,7 +13,6 @@ function Home({ children }) {
       axios
         .get("http://localhost:3333/produto", {})
         .then(function (result) {
-          console.log("result data -->", result.data);
           setStore(result.data);
         })
         .catch(function (error) {
@@ -21,28 +20,43 @@ function Home({ children }) {
         });
     }
     list();
-  }, []);
+  }, [setStore]);
 
   function deletarTodos() {
     if (window.confirm("Você realmente deseja deletar todos?")) {
       axios.delete(`http://localhost:3333/produto`).then((res) => {
-        {
-          setStore([]);
-        }
-
-        console.log(res.data);
+        setStore([]);
       });
     }
   }
 
-  function deletarSelecionados(value) {
-    axios.delete(`http://localhost:3333/produto/${value}`).then((res) => {
-      setStore(store.filter((value, id) => value !== store.id));
-      setStore(...store);
-
-      console.log(res.data);
+  async function deletarSelecionados() {
+    console.log("del ---> ", del);
+    
+    del.forEach(async d => {
+      await axios
+      .delete(
+        `http://localhost:3333/prod/:${d}`
+      )
+      .then((res) => {
+        setStore((prevState) =>
+          prevState.filter((i) => !del.some((d) => d.id === i.id))
+        )
+        console.log("result data -->", d);
+      });   
     });
   }
+  
+
+  const handleSelect = (id) => {
+    //se houver vou desmarcar
+    if (del.includes(id)) {
+      setDel((prevState) => prevState.filter((i) => i !== id));
+      return;
+    }
+    //se não houver vou marcar
+    setDel((prevState) => [...prevState, id]);
+  };
 
   const redirecionarDeletar = (item) => {
     history.push(`/deletar/${item}`);
@@ -53,50 +67,46 @@ function Home({ children }) {
   const redirecionarCadastrar = () => {
     history.push(`/cadastro`);
   };
-  console.log("del -->", del);
   return (
     <div className="conteudo">
       <label>
-        {store.map((item) => {
-          console.log(item);
-          return (
-            <>
-              <div className="wrapper">
-                <div className="nome">
-                  <input
-                    type="checkbox"
-                    value={item.id}
-                    onChange={(event) => setDel(event.target.value, ...del)}
-                  />
-                  {item.nome}
-                </div>
-
-                <div className="modelo">{item.modelo}</div>
-
-                <div className="preco">{item.preco}</div>
-
-                <div className="quantidade">{item.quantidade}</div>
-                <div className="acoes">
-                  <button onClick={() => redirecionarDeletar(item.id)}>
-                    DELETAR
-                  </button>
-                  <br></br>
-                  <button onClick={() => redirecionarAlterar(item.id)}>
-                    ALTERAR
-                  </button>
-                </div>
+        {store.map((item) => (
+          <div key={item.id}>
+            <div className="wrapper">
+              <div className="nome">
+                <input
+                  type="checkbox"
+                  value={item.id}
+                  onChange={() => {
+                    handleSelect(item.id);
+                  }}
+                />
+                {item.nome}
               </div>
-              <hr></hr>
-            </>
-          );
-        })}
+
+              <div className="modelo">{item.modelo}</div>
+
+              <div className="preco">{item.preco}</div>
+
+              <div className="quantidade">{item.quantidade}</div>
+              <div className="acoes">
+                <button onClick={() => redirecionarDeletar(item.id)}>
+                  DELETAR
+                </button>
+                <br></br>
+                <button onClick={() => redirecionarAlterar(item.id)}>
+                  ALTERAR
+                </button>
+              </div>
+            </div>
+            <hr></hr>
+          </div>
+        ))}
       </label>
       <div>
         <button onClick={() => redirecionarCadastrar()}>Cadastrar</button>
         <button onClick={() => deletarTodos()}>Deletar Todos</button>
-        <button onClick={() => deletarSelecionados(del)}>
-          Deletar Selecionados
-        </button>
+        <button onClick={deletarSelecionados}>Deletar Selecionados</button>
       </div>
     </div>
   );
