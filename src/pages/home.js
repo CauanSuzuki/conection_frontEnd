@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { useStorage } from "../Context/store";
 import {} from "./style.css";
-import { useHistory } from "react-router-dom";
+import ReactDOM, { useHistory } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import { makeStyles } from "@material-ui/core/styles";
 
 function Home({ children }) {
   const { store, setStore, del, setDel } = useStorage();
@@ -37,22 +39,26 @@ function Home({ children }) {
     });
 
     const novoStore = store.reduce((acc, cur) => {
-      if (del.some(item => item == cur.id)) return acc;
+      if (del.some((item) => item == cur.id)) return acc;
 
       return [...acc, cur];
     }, []);
 
     setStore(novoStore);
-    setDel([])
+    setDel([]);
   }
 
+  const useStyles = makeStyles({
+    table: {
+      minWidth: 650,
+    },
+  });
+
   const handleSelect = (id) => {
-    //se houver vou desmarcar
     if (del.includes(id)) {
       setDel((prevState) => prevState.filter((i) => i !== id));
       return;
     }
-    //se não houver vou marcar
     setDel((prevState) => [...prevState, id]);
   };
 
@@ -67,6 +73,14 @@ function Home({ children }) {
   };
   return (
     <div className="conteudo">
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      />
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      />
       <label>
         {store.map((item) => (
           <div key={item.id}>
@@ -102,11 +116,27 @@ function Home({ children }) {
         ))}
       </label>
       <div>
-        <button onClick={() => redirecionarCadastrar()}>Cadastrar</button>
-        <button onClick={() => deletarTodos()}>Deletar Todos</button>
-        <button onClick={() => deletarSelecionados()}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => redirecionarCadastrar()}
+        >
+          Cadastrar
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => deletarTodos()}
+        >
+          Deletar Todos
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => deletarSelecionados()}
+        >
           Deletar Selecionados
-        </button>
+        </Button>
       </div>
     </div>
   );
